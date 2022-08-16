@@ -1,0 +1,39 @@
+server:
+  port: 8000
+
+eureka:
+  instance:
+    instance-id: gateway-microservice-instance
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+
+spring:
+  application:
+    name: gateway-service
+
+  cloud:
+    gateway:
+      routes:
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user/**
+
+        - id: order-service
+          uri: lb://ORDER-SERVICE
+          predicates:
+            - Path=/order/**
+
+#ribbon:
+#  eureka:
+#    enabled: true
+#  MaxAutoRetries: 1                 # 동일 서비스 연결시도 횟수: (지정수+1)만큼 재시도
+#  MaxAutoRetriesNextServer: 1       # 다음 서비스 연결 시도 횟수:(지정수+1)만큼 다음 서비스를 찾으려 재시도
+#  OkToRetryOnAllOperations: true    # HTTP Method 수행 실패시 Retry 사용 여부:
+#  ConnectTimeout: 3000              # 서비스별 지정
+#  ReadTimeout: 3000                 # 서비스별 지정
+#  RetryableStatusCodes: 503, 408, 500, 404
+#  NFLoadBalancerRuleClassName: com.netflix.loadbalancer.RoundRobinRule # Load balancing정책. RoundRobin가 Default기 때문에 지정 안해도 됨
